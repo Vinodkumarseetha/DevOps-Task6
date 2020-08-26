@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data-pvc-http
+  labels:
+    env: production-data-http
+spec:
+  accessModes:
+   - ReadWriteOnce
+  resources:  
+    requests:
+      storage: 1Gi
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: log-pvc-http
+  labels:
+    env: production-log-http
+spec:
+  accessModes:
+   - ReadWriteOnce
+  resources:  
+    requests:
+      storage: 1Gi
+
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpserver
+spec:
+  selector:
+    matchLabels:
+      env: production-http
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        env: production-http
+    spec:
+      containers:
+      - name: mycontainer
+        image: arun878/httpd:latest
+        volumeMounts:
+          - name: data-vol-http
+            mountPath: /var/www/html/
+
+          - name: log-vol-http
+            mountPath: /var/log/httpd/
+      volumes:
+      - name: data-vol-http
+        persistentVolumeClaim:
+          claimName: data-pvc-http
+
+      - name: log-vol-http
+        persistentVolumeClaim:
+          claimName: log-pvc-http
