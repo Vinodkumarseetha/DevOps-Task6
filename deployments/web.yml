@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data-pvc-php
+  labels:
+    env: production-data-php
+spec:
+  accessModes:
+   - ReadWriteOnce
+  resources:  
+    requests:
+      storage: 1Gi
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: log-pvc-php
+  labels:
+    env: production-log-php
+spec:
+  accessModes:
+   - ReadWriteOnce
+  resources:  
+    requests:
+      storage: 1Gi
+
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phpserver
+spec:
+  selector:
+    matchLabels:
+      env: production-php
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        env: production-php
+    spec:
+      containers:
+      - name: mycontainer
+        image: arun878/php-server
+        volumeMounts:
+          - name: data-vol-php
+            mountPath: /var/www/html/
+
+          - name: log-vol-php
+            mountPath: /var/log/httpd/
+      volumes:
+      - name: data-vol-php
+        persistentVolumeClaim:
+          claimName: data-pvc-php
+
+      - name: log-vol-php
+        persistentVolumeClaim:
+          claimName: log-pvc-php
