@@ -1,4 +1,5 @@
 job("Task-6-Job-2"){
+    println('hello')
     steps{
         shell('''
                 cd /workspace
@@ -66,7 +67,7 @@ fi
 job("Task-6-Job-4"){
     publishers {
         extendedEmail {
-            recipientList('1728102@kiit.ac.in')
+            recipientList('vinodsharma@chingari.io')
             contentType('text/html')
             defaultSubject('Oops')
             defaultContent('Something broken')
