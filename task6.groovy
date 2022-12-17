@@ -1,5 +1,4 @@
 job("Task-6-Job-2"){
-    println('hello')
     steps{
         shell('''
                 cd /workspace
